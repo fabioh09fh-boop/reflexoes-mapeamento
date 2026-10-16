@@ -1,38 +1,3 @@
-<!-- Biblioteca para conversão de HTML para PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-Passo 2: Adicionar o botão de PDF no topo do painel
-No cabeçalho (<header>), ao lado do botão laranja que já temos, adicione este botão vermelho/vinho:
-
-HTML
-<!-- BOTÃO GERAR PDF -->
-<button onclick="gerarPDF()" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-3 rounded-xl shadow-lg border border-red-400 text-sm transition-colors">
-  <i class="fa-solid fa-file-pdf text-lg"></i>
-  <span>Baixar Relatório (PDF)</span>
-</button>
-Passo 3: Adicionar o script para gerar o PDF
-No final do arquivo, dentro da tag <script>, adicione a seguinte função:
-
-JavaScript
-function gerarPDF() {
-  // 1. Antes de gerar, garante que a aba de Eixos/Tópicos também fique visível ou gera a aba ativa
-  const element = document.body; // Captura todo o painel
-  
-  // 2. Configurações do arquivo PDF
-  const options = {
-    margin:       [10, 10, 10, 10],
-    filename:     'Relatorio_Reflexoes_Mapeamento_Etnografia.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#181e29' },
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-
-  // 3. Executa a geração do PDF
-  html2pdf().set(options).from(element).save();
-}
-📝 Código Completo Atualizado (index.html)
-Se preferir, você pode copiar e substituir todo o seu index.html no GitHub por esta versão já pronta e testada com o botão de PDF:
-
-HTML
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
