@@ -1,3 +1,38 @@
+<!-- Biblioteca para conversão de HTML para PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+Passo 2: Adicionar o botão de PDF no topo do painel
+No cabeçalho (<header>), ao lado do botão laranja que já temos, adicione este botão vermelho/vinho:
+
+HTML
+<!-- BOTÃO GERAR PDF -->
+<button onclick="gerarPDF()" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-3 rounded-xl shadow-lg border border-red-400 text-sm transition-colors">
+  <i class="fa-solid fa-file-pdf text-lg"></i>
+  <span>Baixar Relatório (PDF)</span>
+</button>
+Passo 3: Adicionar o script para gerar o PDF
+No final do arquivo, dentro da tag <script>, adicione a seguinte função:
+
+JavaScript
+function gerarPDF() {
+  // 1. Antes de gerar, garante que a aba de Eixos/Tópicos também fique visível ou gera a aba ativa
+  const element = document.body; // Captura todo o painel
+  
+  // 2. Configurações do arquivo PDF
+  const options = {
+    margin:       [10, 10, 10, 10],
+    filename:     'Relatorio_Reflexoes_Mapeamento_Etnografia.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#181e29' },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  // 3. Executa a geração do PDF
+  html2pdf().set(options).from(element).save();
+}
+📝 Código Completo Atualizado (index.html)
+Se preferir, você pode copiar e substituir todo o seu index.html no GitHub por esta versão já pronta e testada com o botão de PDF:
+
+HTML
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,12 +43,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome CDN para ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- html2pdf.js CDN para geração do PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   
   <style>
-    /* Aplicação da fonte Verdana em todo o documento */
     body {
       font-family: Verdana, Geneva, Tahoma, sans-serif;
-      background-color: #181e29; /* Plano de fundo escuro ligeiramente mais claro */
+      background-color: #181e29;
       color: #f3f4f6;
     }
 
@@ -21,11 +57,6 @@
       background-color: #222a38;
     }
 
-    .bg-card-hover:hover {
-      background-color: #2b3546;
-    }
-
-    /* Transição para abas */
     .tab-content {
       display: none;
     }
@@ -35,29 +66,34 @@
     }
   </style>
 </head>
-<body class="min-h-screen p-4 sm:p-6 lg:p-8">
+<body class="min-h-screen p-4 sm:p-6 lg:p-8" id="painel-conteudo">
 
   <div class="max-w-7xl mx-auto space-y-6">
 
     <!-- CABEÇALHO / HEADER -->
-    <header class="bg-card p-6 rounded-2xl border border-gray-700 shadow-xl space-y-4">
-      <!-- Botão/Elemento de destaque no topo alinhado à esquerda -->
-      <div class="flex justify-start">
-        <span class="inline-flex items-center gap-2 bg-orange-600 text-white font-bold px-5 py-3 rounded-xl shadow-lg border border-orange-400 text-sm sm:text-base">
-          <i class="fa-solid fa-graduation-cap text-lg"></i>
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-card p-6 rounded-2xl border border-gray-700 shadow-xl">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
           Curso Sesc de Gestão do Esporte - 5ª edição
-        </span>
+        </h1>
+        <p class="text-gray-300 mt-1 text-base sm:text-lg font-semibold">
+          Reflexões: Mapeamento e Etnografia
+        </p>
       </div>
 
-      <!-- Subtítulo e informações de apoio -->
-      <div>
-        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-          <i class="fa-solid fa-map-location-dot text-amber-400"></i>
-          Reflexões: Mapeamento e Etnografia
-        </h1>
-        <p class="text-gray-300 mt-2 text-sm sm:text-base">
-          Aula presencial com o Profº Rafael Sanzio • Análise das respostas dos alunos
-        </p>
+      <!-- BOTÕES DE AÇÃO -->
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- BOTÃO GERAR PDF -->
+        <button onclick="gerarPDF()" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-3 rounded-xl shadow-lg border border-red-400 text-sm transition-colors">
+          <i class="fa-solid fa-file-pdf text-lg"></i>
+          <span>Baixar Relatório (PDF)</span>
+        </button>
+
+        <!-- INDICADOR DA AULA -->
+        <span class="inline-flex items-center gap-2 bg-orange-600 text-white font-bold px-4 py-3 rounded-xl shadow-lg border border-orange-400 text-sm">
+          <i class="fa-solid fa-graduation-cap text-lg"></i>
+          Profº Rafael Sanzio
+        </span>
       </div>
     </header>
 
@@ -76,9 +112,9 @@
       </div>
     </section>
 
-    <!-- UNICO CARD DE MÉTRICA MANTIDO: TOTAL DE ALUNOS -->
-    <section class="w-full">
-      <div class="bg-card p-5 rounded-xl border border-gray-700 flex items-center gap-4 max-w-sm">
+    <!-- CARD MÉTRICA RESUMIDA -->
+    <section class="grid grid-cols-1 gap-4">
+      <div class="bg-card p-5 rounded-xl border border-gray-700 flex items-center gap-4">
         <div class="p-4 bg-blue-600 rounded-xl text-white">
           <i class="fa-solid fa-users text-2xl"></i>
         </div>
@@ -102,7 +138,6 @@
     <!-- CONTEÚDO ABA 1: RESPOSTAS POR ALUNO -->
     <div id="tab-alunos" class="tab-content active space-y-4">
       
-      <!-- CAMPO DE FILTRO / PESQUISA POR ALUNO -->
       <div class="bg-card p-4 rounded-xl border border-gray-700 flex flex-col sm:flex-row gap-4 items-center justify-between">
         <div class="relative w-full sm:w-96">
           <i class="fa-solid fa-search absolute left-4 top-3.5 text-gray-400"></i>
@@ -111,10 +146,9 @@
         <p id="studentCount" class="text-sm text-gray-300 font-bold">Exibindo 10 de 10 alunos</p>
       </div>
 
-      <!-- GRID DE CARDS DOS ALUNOS -->
       <div id="studentsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        <!-- ALUNO 1 - EVERTON (AZUL) -->
+        <!-- ALUNO 1 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="everton celeste faustino">
           <div class="p-3 bg-blue-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Everton Celeste Faustino</span>
@@ -134,7 +168,7 @@
           </details>
         </div>
 
-        <!-- ALUNO 2 - JULIO (ROXO) -->
+        <!-- ALUNO 2 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="julio cezar gregorio de araujo">
           <div class="p-3 bg-purple-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Julio Cezar Gregorio de Araujo</span>
@@ -154,7 +188,7 @@
           </details>
         </div>
 
-        <!-- ALUNO 3 - DIOGO (ESMERALDA) -->
+        <!-- ALUNO 3 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="diogo de barros souza">
           <div class="p-3 bg-emerald-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Diogo de Barros Souza</span>
@@ -174,7 +208,7 @@
           </details>
         </div>
 
-        <!-- ALUNO 4 - ADILSON (ROSA) -->
+        <!-- ALUNO 4 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="adilson de jesus dos santos">
           <div class="p-3 bg-pink-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Adilson de Jesus dos Santos</span>
@@ -194,7 +228,7 @@
           </details>
         </div>
 
-        <!-- ALUNO 5 - RODRIGO (VERMELHO) -->
+        <!-- ALUNO 5 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="rodrigo salazar stavale">
           <div class="p-3 bg-red-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Rodrigo Salazar Stavale</span>
@@ -214,7 +248,7 @@
           </details>
         </div>
 
-        <!-- ALUNO 6 - HELENA (TEAL) -->
+        <!-- ALUNO 6 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="helena barbosa">
           <div class="p-3 bg-teal-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Helena Barbosa</span>
@@ -234,7 +268,7 @@
           </details>
         </div>
 
-        <!-- ALUNO 7 - VALÉRIA (LARANJA) -->
+        <!-- ALUNO 7 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="valeria aparecida da silva">
           <div class="p-3 bg-orange-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Valéria Aparecida da Silva</span>
@@ -254,7 +288,7 @@
           </details>
         </div>
 
-        <!-- ALUNO 8 - THIAGO (CYAN) -->
+        <!-- ALUNO 8 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="thiago alves">
           <div class="p-3 bg-cyan-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Thiago Alves</span>
@@ -274,7 +308,7 @@
           </details>
         </div>
 
-        <!-- ALUNO 9 - AMANDA (INDIGO) -->
+        <!-- ALUNO 9 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="amanda">
           <div class="p-3 bg-indigo-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Amanda</span>
@@ -294,7 +328,7 @@
           </details>
         </div>
 
-        <!-- ALUNO 10 - ALEXANDRE (VIOLETA) -->
+        <!-- ALUNO 10 -->
         <div class="student-card bg-card p-5 rounded-xl border border-gray-700 space-y-3" data-name="alexandre soares miranda">
           <div class="p-3 bg-violet-600 rounded-lg text-white font-bold flex items-center justify-between shadow">
             <span class="text-base"><i class="fa-solid fa-user-circle mr-2"></i>Alexandre Soares Miranda</span>
@@ -325,13 +359,13 @@
           <i class="fa-solid fa-layer-group text-amber-400 mr-2"></i>Principais tópicos ressaltados nas respostas
         </h2>
         <p class="text-sm text-gray-300">
-          Sintese fidedigna dos relatos dos alunos a partir dos conteúdos ministrados pelo Profº Rafael Sanzio.
+          Compilado dos relatos dos alunos a partir dos conceitos de cartografia social, etnografia e território apresentados pelo Profº Rafael Sanzio.
         </p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        <!-- TÓPICO 1 (COR VIBRANTE: AZUL) -->
+        <!-- TÓPICO 1 -->
         <div class="bg-card rounded-xl border border-gray-700 overflow-hidden shadow-lg">
           <div class="bg-blue-600 p-4 text-white font-bold text-lg flex items-center gap-3">
             <i class="fa-solid fa-dna text-xl"></i>
@@ -339,7 +373,7 @@
           </div>
           <div class="p-5 space-y-3">
             <p class="text-sm text-gray-200 leading-relaxed">
-              Os relatos destacaram a experiência como um retorno às origens familiares, com forte conexão entre a exposição de fotos da aula, a memória dos antepassados, as histórias de infância e a reconexão com a identidade.
+              Os relatos ressaltaram a experiência como um retorno às origens familiares, com forte conexão entre a exposição de fotos da aula, a lembrança dos antepassados, as histórias de lutas de infância e a reconexão com a identidade.
             </p>
             <div class="border-t border-gray-700 pt-3">
               <span class="text-xs text-gray-400 font-bold uppercase">Alunos que ressaltaram este ponto:</span>
@@ -352,15 +386,15 @@
           </div>
         </div>
 
-        <!-- TÓPICO 2 (COR VIBRANTE: ROXO) -->
+        <!-- TÓPICO 2 -->
         <div class="bg-card rounded-xl border border-gray-700 overflow-hidden shadow-lg">
           <div class="bg-purple-600 p-4 text-white font-bold text-lg flex items-center gap-3">
             <i class="fa-solid fa-bed text-xl"></i>
-            <span>2. Mapeamento do Quarto/Santuário e Auto-etnografia</span>
+            <span>2. Mapeamento do Quarto como Santuário e Auto-etnografia</span>
           </div>
           <div class="p-5 space-y-3">
             <p class="text-sm text-gray-200 leading-relaxed">
-              O exercício prático do "quarto como santuário" foi descrito como um arquivo vivo de memórias e um exercício de olhar para si mesmo antes de mapear o outro, revelando significados através dos objetos guardados.
+              O exercício prático do "quarto como santuário" foi descrito como um arquivo vivo de memórias e um exercício de observar a si mesmo antes de mapear o outro, revelando significados através dos objetos guardados.
             </p>
             <div class="border-t border-gray-700 pt-3">
               <span class="text-xs text-gray-400 font-bold uppercase">Alunos que ressaltaram este ponto:</span>
@@ -374,11 +408,11 @@
           </div>
         </div>
 
-        <!-- TÓPICO 3 (COR VIBRANTE: ESMERALDA) -->
+        <!-- TÓPICO 3 -->
         <div class="bg-card rounded-xl border border-gray-700 overflow-hidden shadow-lg">
           <div class="bg-emerald-600 p-4 text-white font-bold text-lg flex items-center gap-3">
             <i class="fa-solid fa-heart text-xl"></i>
-            <span>3. Pertencimento e Cultura do Espaço</span>
+            <span>3. Pertencimento, Sensações e Cultura do Espaço</span>
           </div>
           <div class="p-5 space-y-3">
             <p class="text-sm text-gray-200 leading-relaxed">
@@ -395,11 +429,11 @@
           </div>
         </div>
 
-        <!-- TÓPICO 4 (COR VIBRANTE: ROSA) -->
+        <!-- TÓPICO 4 -->
         <div class="bg-card rounded-xl border border-gray-700 overflow-hidden shadow-lg">
           <div class="bg-pink-600 p-4 text-white font-bold text-lg flex items-center gap-3">
             <i class="fa-solid fa-hand-holding-heart text-xl"></i>
-            <span>4. Privilégios e Acessibilidade</span>
+            <span>4. Privilégios, Acessibilidade e Reconhecimento do Outro</span>
           </div>
           <div class="p-5 space-y-3">
             <p class="text-sm text-gray-200 leading-relaxed">
@@ -415,11 +449,11 @@
           </div>
         </div>
 
-        <!-- TÓPICO 5 (COR VIBRANTE: ÂMBAR) -->
+        <!-- TÓPICO 5 -->
         <div class="bg-card rounded-xl border border-gray-700 overflow-hidden shadow-lg md:col-span-2">
           <div class="bg-amber-600 p-4 text-white font-bold text-lg flex items-center gap-3">
             <i class="fa-solid fa-briefcase text-xl"></i>
-            <span>5. Aplicação Prática na Gestão</span>
+            <span>5. Aplicação Prática na Gestão, Atendimento e Projetos Sociais</span>
           </div>
           <div class="p-5 space-y-3">
             <p class="text-sm text-gray-200 leading-relaxed">
@@ -442,7 +476,7 @@
 
     <!-- RODAPÉ -->
     <footer class="text-center text-xs text-gray-400 border-t border-gray-800 pt-6 mt-8">
-      <p>Curso Sesc de Gestão do Esporte - 5ª edição • Mapeamento e Etnografia • Profº Rafael Sanzio</p>
+      <p>Curso Sesc de Gestão do Esporte • Mapeamento e Etnografia • Profº Rafael Sanzio</p>
     </footer>
 
   </div>
@@ -484,6 +518,28 @@
       });
 
       document.getElementById('studentCount').innerText = `Exibindo ${visibleCount} de 10 alunos`;
+    }
+
+    // Função para Gerar o PDF
+    function gerarPDF() {
+      // Abre todas as caixas "details" temporariamente para que o PDF registre as respostas completas
+      const detailsList = document.querySelectorAll('details');
+      detailsList.forEach(d => d.open = true);
+
+      const element = document.getElementById('painel-conteudo');
+      
+      const options = {
+        margin:       [8, 8, 8, 8],
+        filename:     'Relatorio_Reflexoes_Mapeamento_Etnografia.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#181e29' },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(options).from(element).save().then(() => {
+        // Restaura as respostas completas para o estado oculto original
+        detailsList.forEach(d => d.open = false);
+      });
     }
   </script>
 </body>
